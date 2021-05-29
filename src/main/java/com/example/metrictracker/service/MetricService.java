@@ -4,6 +4,7 @@ import com.example.metrictracker.model.Metric;
 import com.example.metrictracker.repository.MetricRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Service
@@ -16,6 +17,9 @@ public class MetricService {
     }
 
     public Metric createNewMetric(Metric metric){
+        if(metric.getValues() == null){
+            metric.setValues(new ArrayList<>());
+        }
        return metricRepository.saveNewMetric(metric);
     }
 

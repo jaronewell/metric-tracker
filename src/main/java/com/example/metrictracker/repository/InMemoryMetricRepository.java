@@ -19,9 +19,8 @@ public class InMemoryMetricRepository implements MetricRepository {
     @Override
     public Metric saveNewMetric(Metric metric) {
         if (metricMap.containsKey(metric.getMetricName())) {
-            //Throw Exception
             log.error("A metric with the name {} already exists", metric.getMetricName());
-            throw new RuntimeException("A metric with the provided name already exists");
+            throw new IllegalArgumentException("A metric with the same name already exists");
         }
         metricMap.put(metric.getMetricName(), metric);
         return metric;
@@ -29,18 +28,19 @@ public class InMemoryMetricRepository implements MetricRepository {
 
     @Override
     public Metric addMetricValues(String metricName, Collection<Double> metricValues) {
-        if (metricMap.containsKey(metricName)) {
-            metricMap.get(metricName).getValues().addAll(metricValues);
+        if (!metricMap.containsKey(metricName)) {
+            log.error("A metric with the name {} was not found", metricName);
+            throw new IllegalArgumentException("A metric with the provided name does not exist");
         }
-        return null;
+        metricMap.get(metricName).getValues().addAll(metricValues);
+        return metricMap.get(metricName);
     }
 
     @Override
     public Metric getMetricByName(String metricName) {
         if (!metricMap.containsKey(metricName)) {
-            //Throw Exception
             log.error("A metric with the name {} was not found", metricName);
-            throw new RuntimeException("A metric with the provided name was not found {}");
+            throw new IllegalArgumentException("A metric with the provided name does not exist");
         }
 
         return metricMap.get(metricName);

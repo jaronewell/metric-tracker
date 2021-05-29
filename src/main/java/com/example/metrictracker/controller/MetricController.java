@@ -49,8 +49,8 @@ public class MetricController {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(RuntimeException.class)
-    public String handleValidationExceptions(RuntimeException ex) {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public String handleExceptions(IllegalArgumentException ex) {
         return ex.getMessage();
     }
 }
