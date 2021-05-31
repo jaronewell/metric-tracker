@@ -11,4 +11,6 @@ public interface MetricRepository {
     Metric addMetricValues(String metricName, Collection<Double> metricValue);
 
     Metric getMetricByName(String metricName);
+
+    Collection<Metric> getAllMetrics();
 }

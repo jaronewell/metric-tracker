@@ -1,5 +1,7 @@
 package com.example.metrictracker.repository;
 
+import com.example.metrictracker.exception.MetricAlreadyExistsException;
+import com.example.metrictracker.exception.MetricNotFoundException;
 import com.example.metrictracker.model.Metric;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,8 +16,8 @@ import java.util.concurrent.ConcurrentMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
 @SuppressWarnings("unchecked")
+@ExtendWith(MockitoExtension.class)
 public class InMemoryMetricRepositoryTest {
 
     @InjectMocks
@@ -37,7 +39,7 @@ public class InMemoryMetricRepositoryTest {
         metricMap.put(testMetric.getMetricName(), testMetric);
         ReflectionTestUtils.setField(inMemoryMetricRepository, "metricMap", metricMap);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> inMemoryMetricRepository.saveNewMetric(new Metric("testMetric", Collections.emptyList())));
+        Assertions.assertThrows(MetricAlreadyExistsException.class, () -> inMemoryMetricRepository.saveNewMetric(new Metric("testMetric", Collections.emptyList())));
         assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("testMetric")).isEqualTo(testMetric);
     }
 
@@ -55,7 +57,7 @@ public class InMemoryMetricRepositoryTest {
 
     @Test
     void addMetricValuesThrowsExceptionIfMetricNotFound() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> inMemoryMetricRepository.addMetricValues("testMetric", new ArrayList<>(Arrays.asList(1.0, 2.0))));
+        Assertions.assertThrows(MetricNotFoundException.class, () -> inMemoryMetricRepository.addMetricValues("testMetric", new ArrayList<>(Arrays.asList(1.0, 2.0))));
         assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("testMetric")).isNull();
     }
 
@@ -73,7 +75,19 @@ public class InMemoryMetricRepositoryTest {
 
     @Test
     void getMetricByNameThrowsExceptionIfMetricNotFound() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> inMemoryMetricRepository.getMetricByName("testMetric"));
+        Assertions.assertThrows(MetricNotFoundException.class, () -> inMemoryMetricRepository.getMetricByName("testMetric"));
         assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("testMetric")).isNull();
+    }
+
+    @Test
+    void getAllMetricsSuccessful() {
+        ConcurrentMap<String, Metric> metricMap = new ConcurrentHashMap<>();
+        Metric testMetric = new Metric("testMetric", new ArrayList<>(Arrays.asList(100.0, 3.0)));
+        metricMap.put(testMetric.getMetricName(), testMetric);
+        ReflectionTestUtils.setField(inMemoryMetricRepository, "metricMap", metricMap);
+
+        Collection<Metric> metrics = inMemoryMetricRepository.getAllMetrics();
+
+        assertThat(metrics).isEqualTo(metricMap.values());
     }
 }
