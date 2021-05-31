@@ -6,7 +6,7 @@ package com.example.metrictracker.exception;
  */
 public class MetricNotFoundException extends RuntimeException {
 
-    public MetricNotFoundException(){
-        super("The metric with the given name does not exist");
+    public MetricNotFoundException(String metricName){
+        super("The metric with the name \"" + metricName + "\" does not exist");
     }
 }

@@ -17,6 +17,8 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class MetricServiceTest {
@@ -27,7 +29,7 @@ public class MetricServiceTest {
 
   @Test
   void createNewMetricSuccessful() {
-    Metric testMetric = new Metric("testMetric", null);
+    Metric testMetric = new Metric("test-metric", null);
     Mockito.when(metricRepository.saveNewMetric(testMetric)).thenReturn(testMetric);
 
     Metric newMetric = metricService.createNewMetric(testMetric);
@@ -35,24 +37,32 @@ public class MetricServiceTest {
         .saveNewMetric(
             Mockito.argThat(
                 metric ->
-                    metric.getMetricName().equals("testMetric") && metric.getValues() != null));
+                    metric.getMetricName().equals("test-metric") && metric.getValues() != null));
     assertThat(newMetric).isEqualTo(testMetric);
+  }
+
+  @Test
+  void createNewMetricThrowsExceptionIfNameIsInvalid() {
+    Metric testMetric = new Metric("Invalid Name", null);
+
+    assertThrows(IllegalArgumentException.class, () -> metricService.createNewMetric(testMetric));
+    Mockito.verify(metricRepository, times(0)).saveNewMetric(any());
   }
 
   @Test
   void addValuesToMetricSuccessful() {
     Collection<Double> valuesToAdd = Arrays.asList(1.0, 2.0);
-    Metric updatedMetric = new Metric("testMetric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0, 1.0, 2.0)));
-    Mockito.when(metricRepository.addMetricValues("testMetric", valuesToAdd)).thenReturn(updatedMetric);
+    Metric updatedMetric = new Metric("test-metric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0, 1.0, 2.0)));
+    Mockito.when(metricRepository.addMetricValues("test-metric", valuesToAdd)).thenReturn(updatedMetric);
 
-    Metric metric = metricService.addValuesToMetric("testMetric", valuesToAdd);
+    Metric metric = metricService.addValuesToMetric("test-metric", valuesToAdd);
 
     assertThat(metric).isEqualTo(updatedMetric);
   }
 
   @Test
   void getAllMetricsSuccessful() {
-    Metric testMetric = new Metric("testMetric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0)));
+    Metric testMetric = new Metric("test-metric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0)));
     Collection<Metric> testMetrics = Collections.singletonList(testMetric);
     Mockito.when(metricRepository.getAllMetrics()).thenReturn(testMetrics);
 
@@ -62,7 +72,7 @@ public class MetricServiceTest {
 
   @Test
   void getMeanForMetricSuccessful() {
-    Metric testMetric = new Metric("testMetric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0)));
+    Metric testMetric = new Metric("test-metric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0)));
     Mockito.when(metricRepository.getMetricByName(testMetric.getMetricName()))
         .thenReturn(testMetric);
 
@@ -72,7 +82,7 @@ public class MetricServiceTest {
 
   @Test
   void getMeanForMetricThrowsExceptionIfNoValuesFound() {
-    Metric testMetric = new Metric("testMetric", new ArrayList<>());
+    Metric testMetric = new Metric("test-metric", new ArrayList<>());
     Mockito.when(metricRepository.getMetricByName(testMetric.getMetricName()))
         .thenReturn(testMetric);
 
@@ -83,7 +93,7 @@ public class MetricServiceTest {
 
   @Test
   void getMedianForMetricWithOddCountSuccessful() {
-    Metric testMetric = new Metric("testMetric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0)));
+    Metric testMetric = new Metric("test-metric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0)));
     Mockito.when(metricRepository.getMetricByName(testMetric.getMetricName()))
         .thenReturn(testMetric);
 
@@ -94,7 +104,7 @@ public class MetricServiceTest {
   @Test
   void getMedianForMetricWithEvenCountSuccessful() {
     Metric testMetric =
-        new Metric("testMetric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0, 4.0)));
+        new Metric("test-metric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0, 4.0)));
     Mockito.when(metricRepository.getMetricByName(testMetric.getMetricName()))
         .thenReturn(testMetric);
 
@@ -104,7 +114,7 @@ public class MetricServiceTest {
 
   @Test
   void getMedianForMetricThrowsExceptionIfNoValuesFound() {
-    Metric testMetric = new Metric("testMetric", new ArrayList<>());
+    Metric testMetric = new Metric("test-metric", new ArrayList<>());
     Mockito.when(metricRepository.getMetricByName(testMetric.getMetricName()))
         .thenReturn(testMetric);
 
@@ -115,7 +125,7 @@ public class MetricServiceTest {
 
   @Test
   void getMinForMetricSuccessful() {
-    Metric testMetric = new Metric("testMetric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0)));
+    Metric testMetric = new Metric("test-metric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0)));
     Mockito.when(metricRepository.getMetricByName(testMetric.getMetricName()))
         .thenReturn(testMetric);
 
@@ -125,7 +135,7 @@ public class MetricServiceTest {
 
   @Test
   void getMinForMetricThrowsExceptionIfNoValuesFound() {
-    Metric testMetric = new Metric("testMetric", new ArrayList<>());
+    Metric testMetric = new Metric("test-metric", new ArrayList<>());
     Mockito.when(metricRepository.getMetricByName(testMetric.getMetricName()))
         .thenReturn(testMetric);
 
@@ -136,7 +146,7 @@ public class MetricServiceTest {
 
   @Test
   void getMaxForMetricSuccessful() {
-    Metric testMetric = new Metric("testMetric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0)));
+    Metric testMetric = new Metric("test-metric", new ArrayList<>(Arrays.asList(7.0, 2.0, 6.0)));
     Mockito.when(metricRepository.getMetricByName(testMetric.getMetricName()))
         .thenReturn(testMetric);
 
@@ -146,7 +156,7 @@ public class MetricServiceTest {
 
   @Test
   void getMaxForMetricThrowsExceptionIfNoValuesFound() {
-    Metric testMetric = new Metric("testMetric", new ArrayList<>());
+    Metric testMetric = new Metric("test-metric", new ArrayList<>());
     Mockito.when(metricRepository.getMetricByName(testMetric.getMetricName()))
         .thenReturn(testMetric);
 

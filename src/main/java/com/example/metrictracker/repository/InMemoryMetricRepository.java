@@ -21,7 +21,7 @@ public class InMemoryMetricRepository implements MetricRepository {
   @Override
   public Metric saveNewMetric(Metric metric) {
     if (metricMap.containsKey(metric.getMetricName())) {
-      throw new MetricAlreadyExistsException();
+      throw new MetricAlreadyExistsException(metric.getMetricName());
     }
     metricMap.put(metric.getMetricName(), metric);
     return metric;
@@ -31,7 +31,7 @@ public class InMemoryMetricRepository implements MetricRepository {
   public Metric addMetricValues(String metricName, Collection<Double> metricValues) {
     if (!metricMap.containsKey(metricName)) {
       log.error("A metric with the name {} was not found", metricName);
-      throw new MetricNotFoundException();
+      throw new MetricNotFoundException(metricName);
     }
     metricMap.get(metricName).getValues().addAll(metricValues);
     return metricMap.get(metricName);
@@ -41,7 +41,7 @@ public class InMemoryMetricRepository implements MetricRepository {
   public Metric getMetricByName(String metricName) {
     if (!metricMap.containsKey(metricName)) {
       log.error("A metric with the name {} was not found", metricName);
-      throw new MetricNotFoundException();
+      throw new MetricNotFoundException(metricName);
     }
 
     return metricMap.get(metricName);

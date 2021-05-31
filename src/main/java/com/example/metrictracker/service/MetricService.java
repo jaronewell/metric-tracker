@@ -20,9 +20,13 @@ public class MetricService {
   }
 
   public Metric createNewMetric(Metric metric) {
+    if(!metric.getMetricName().matches("^[a-z0-9-]*$")){
+      throw new IllegalArgumentException("The metric name must only contain lowercase letters, numbers, or dashes");
+    }
     if (metric.getValues() == null) {
       metric.setValues(new ArrayList<>());
     }
+
     return metricRepository.saveNewMetric(metric);
   }
 

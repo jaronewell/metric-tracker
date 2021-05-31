@@ -26,63 +26,63 @@ public class InMemoryMetricRepositoryTest {
 
     @Test
     void saveNewMetricSuccessful() {
-        Metric testMetric = new Metric("testMetric", Arrays.asList(100.0, 3.0));
+        Metric testMetric = new Metric("test-metric", Arrays.asList(100.0, 3.0));
 
         inMemoryMetricRepository.saveNewMetric(testMetric);
-        assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("testMetric")).isEqualTo(testMetric);
+        assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("test-metric")).isEqualTo(testMetric);
     }
 
     @Test
     void saveNewMetricThrowsExceptionWhenMetricAlreadyExists() {
         ConcurrentMap<String, Metric> metricMap = new ConcurrentHashMap<>();
-        Metric testMetric = new Metric("testMetric", Arrays.asList(100.0, 3.0));
+        Metric testMetric = new Metric("test-metric", Arrays.asList(100.0, 3.0));
         metricMap.put(testMetric.getMetricName(), testMetric);
         ReflectionTestUtils.setField(inMemoryMetricRepository, "metricMap", metricMap);
 
-        Assertions.assertThrows(MetricAlreadyExistsException.class, () -> inMemoryMetricRepository.saveNewMetric(new Metric("testMetric", Collections.emptyList())));
-        assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("testMetric")).isEqualTo(testMetric);
+        Assertions.assertThrows(MetricAlreadyExistsException.class, () -> inMemoryMetricRepository.saveNewMetric(new Metric("test-metric", Collections.emptyList())));
+        assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("test-metric")).isEqualTo(testMetric);
     }
 
     @Test
     void addMetricValuesSuccessful() {
         ConcurrentMap<String, Metric> metricMap = new ConcurrentHashMap<>();
-        Metric testMetric = new Metric("testMetric", new ArrayList<>(Arrays.asList(100.0, 3.0)));
+        Metric testMetric = new Metric("test-metric", new ArrayList<>(Arrays.asList(100.0, 3.0)));
         metricMap.put(testMetric.getMetricName(), testMetric);
         ReflectionTestUtils.setField(inMemoryMetricRepository, "metricMap", metricMap);
 
-        inMemoryMetricRepository.addMetricValues("testMetric", new ArrayList<>(Arrays.asList(1.0, 2.0)));
+        inMemoryMetricRepository.addMetricValues("test-metric", new ArrayList<>(Arrays.asList(1.0, 2.0)));
         List<Double> expectedValues = new ArrayList<>(Arrays.asList(100.0, 3.0, 1.0, 2.0));
-        assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("testMetric").getValues()).isEqualTo(expectedValues);
+        assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("test-metric").getValues()).isEqualTo(expectedValues);
     }
 
     @Test
     void addMetricValuesThrowsExceptionIfMetricNotFound() {
-        Assertions.assertThrows(MetricNotFoundException.class, () -> inMemoryMetricRepository.addMetricValues("testMetric", new ArrayList<>(Arrays.asList(1.0, 2.0))));
-        assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("testMetric")).isNull();
+        Assertions.assertThrows(MetricNotFoundException.class, () -> inMemoryMetricRepository.addMetricValues("test-metric", new ArrayList<>(Arrays.asList(1.0, 2.0))));
+        assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("test-metric")).isNull();
     }
 
     @Test
     void getMetricByNameSuccessful() {
         ConcurrentMap<String, Metric> metricMap = new ConcurrentHashMap<>();
-        Metric testMetric = new Metric("testMetric", new ArrayList<>(Arrays.asList(100.0, 3.0)));
+        Metric testMetric = new Metric("test-metric", new ArrayList<>(Arrays.asList(100.0, 3.0)));
         metricMap.put(testMetric.getMetricName(), testMetric);
         ReflectionTestUtils.setField(inMemoryMetricRepository, "metricMap", metricMap);
 
-        Metric metric = inMemoryMetricRepository.getMetricByName("testMetric");
+        Metric metric = inMemoryMetricRepository.getMetricByName("test-metric");
 
         assertThat(metric).isEqualTo(testMetric);
     }
 
     @Test
     void getMetricByNameThrowsExceptionIfMetricNotFound() {
-        Assertions.assertThrows(MetricNotFoundException.class, () -> inMemoryMetricRepository.getMetricByName("testMetric"));
-        assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("testMetric")).isNull();
+        Assertions.assertThrows(MetricNotFoundException.class, () -> inMemoryMetricRepository.getMetricByName("test-metric"));
+        assertThat(((Map<String, Metric>) Objects.requireNonNull(ReflectionTestUtils.getField(inMemoryMetricRepository, "metricMap"))).get("test-metric")).isNull();
     }
 
     @Test
     void getAllMetricsSuccessful() {
         ConcurrentMap<String, Metric> metricMap = new ConcurrentHashMap<>();
-        Metric testMetric = new Metric("testMetric", new ArrayList<>(Arrays.asList(100.0, 3.0)));
+        Metric testMetric = new Metric("test-metric", new ArrayList<>(Arrays.asList(100.0, 3.0)));
         metricMap.put(testMetric.getMetricName(), testMetric);
         ReflectionTestUtils.setField(inMemoryMetricRepository, "metricMap", metricMap);
 

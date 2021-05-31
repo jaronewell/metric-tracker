@@ -6,7 +6,7 @@ package com.example.metrictracker.exception;
  */
 public class MetricAlreadyExistsException extends RuntimeException {
 
-    public MetricAlreadyExistsException(){
-        super("The metric with the given name already exists");
+    public MetricAlreadyExistsException(String metricName){
+        super("The metric with the name \"" + metricName + "\" already exists");
     }
 }
